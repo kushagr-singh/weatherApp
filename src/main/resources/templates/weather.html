@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Weather - ' + ${weatherData?.cityName ?: 'Weather App'}">Weather App</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body th:class="'weather-page ' + ${weatherData?.backgroundClass ?: 'default'}">
+<div class="container">
+    <!-- Search Bar Always at Top -->
+    <div class="search-section">
+        <div class="app-header">
+            <h1 class="app-title">🌤️ Weather Forecast</h1>
+        </div>
+        <form th:action="@{/weather}" method="post" class="search-form">
+            <div class="search-container">
+                <input type="text" name="cityName" placeholder="Enter city name..."
+                       class="search-input" required autocomplete="off">
+                <button type="submit" class="search-btn">🔍 Get Weather</button>
+            </div>
+        </form>
+
+        <!-- Error Message -->
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    </div>
+
+    <!-- Weather Content (only show if weatherData exists) -->
+    <div th:if="${weatherData}" class="weather-content">
+        <!-- City Time and Date -->
+<!--        <div class="city-time">-->
+<!--            <span class="city-date" th:text="${weatherData.cityDate}">Date</span>-->
+<!--            <span class="city-time-display" th:text="${weatherData.cityTime}">Time</span>-->
+<!--        </div>-->
+
+        <!-- Current Weather Section -->
+        <div class="current-weather">
+            <div class="weather-header">
+                <div class="location-info">
+                    <h1 class="city-name" th:text="${weatherData.cityName}">City Name</h1>
+                    <p class="country-name" th:text="${weatherData.country}">Country</p>
+                    <span class="city-date" th:text="${weatherData.cityDate}">Date</span>
+                    <span class="city-time-display" th:text="${weatherData.cityTime}">Time</span>
+                </div>
+                <div class="weather-icon" th:text="${weatherData.weatherIcon}">🌤️</div>
+            </div>
+
+            <div class="temperature-section">
+                <div class="main-temp" th:text="${weatherData.temperature} + '°C'">22°C</div>
+                <div class="feels-like" th:text="'Feels like ' + ${weatherData.feelsLike} + '°C'">Feels like 25°C</div>
+                <div class="condition" th:text="${weatherData.weatherDescription}">Partly Cloudy</div>
+            </div>
+        </div>
+
+        <!-- Today's Details -->
+        <div class="daily-stats">
+            <h2 class="section-title">Today's Details</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💧</div>
+                    <div class="stat-label">Humidity</div>
+                    <div class="stat-value" th:text="${weatherData.humidity} + '%'">68%</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🌬️</div>
+                    <div class="stat-label">Wind</div>
+                    <div class="stat-value" th:text="${weatherData.windSpeed} + ' m/s, ' + ${weatherData.windDeg} + '°'">5 m/s, 170°</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">☀️</div>
+                    <div class="stat-label">UV Index</div>
+                    <div class="stat-value" th:text="${weatherData.uvIndex >= 0} ? ${weatherData.uvIndex} : 'N/A'">5</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-label">Visibility</div>
+                    <div class="stat-value" th:text="${weatherData.visibility >= 0} ? (${weatherData.visibility}/1000) + ' km' : 'N/A'">10 km</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🌅</div>
+                    <div class="stat-label">Sunrise</div>
+                    <div class="stat-value" th:text="${weatherData.sunrise}">06:12 AM</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🌇</div>
+                    <div class="stat-label">Sunset</div>
+                    <div class="stat-value" th:text="${weatherData.sunset}">07:45 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5-Day Forecast -->
+        <div class="forecast-section">
+            <h2 class="section-title">5-Day Forecast</h2>
+            <div class="forecast-grid">
+                <div th:each="day : ${forecast}" class="forecast-card">
+                    <div class="forecast-day" th:text="${day[0]}">Day</div>
+                    <div class="forecast-icon" th:text="${day[1]}">🌤️</div>
+                    <div class="forecast-temp" th:text="${day[2]}">22°C</div>
+                    <div class="forecast-desc" th:text="${day[3]}">Condition</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Built with <strong>Spring Boot</strong> & <strong>Thymeleaf</strong></p>
+    </div>
+</div>
+</body>
+</html>
